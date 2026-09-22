@@ -37,6 +37,7 @@ jobs:
           images: ghcr.io/${{ env.REPO_LC }}
           tags: |
             type=raw,value=latest
+            type=raw,value=v2
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

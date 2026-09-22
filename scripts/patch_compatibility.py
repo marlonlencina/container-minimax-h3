@@ -47,6 +47,16 @@ def patch_comfy_kitchen():
                     if modified:
                         if "import typing" not in content:
                             content = "import typing\n" + content
+                            if "from __future__" in content:
+                                lines = content.splitlines(keepends=True)
+                                idx = 0
+                                for i, line in enumerate(lines):
+                                    if line.startswith("from __future__"):
+                                        idx = i + 1
+                                lines.insert(idx, "import typing\n")
+                                content = "".join(lines)
+                            else:
+                                content = "import typing\n" + content
                         py_file.write_text(content, encoding="utf-8")
                         print(f"[PATCH] Patched type hints in: {py_file}")
                         patched_count += 1
