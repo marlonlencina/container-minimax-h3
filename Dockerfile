@@ -86,6 +86,7 @@ COPY workflows/ /workspace/workflows/
 
 RUN chmod +x /workspace/scripts/*.sh /workspace/scripts/*.py && \
     python3 /workspace/scripts/patch_compatibility.py
+    python3 /workspace/scripts/patch_compatibility.py || true
 
 # Porta padrão do ComfyUI
 EXPOSE 8188
