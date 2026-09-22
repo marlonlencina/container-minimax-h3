@@ -43,7 +43,13 @@ if [ ! -f "${COMFY_DIR}/input/5.mp3" ]; then
     ffmpeg -f lavfi -i "anullsrc=r=44100:cl=mono" -t 1 -q:a 9 -acodec libmp3lame "${COMFY_DIR}/input/5.mp3" -y 2>/dev/null || true
 fi
 
-# 4. Parâmetros de execução otimizados para RTX 3090:
+# 4. Aplica patches de compatibilidade (PyTorch infer_schema / comfy_kitchen)
+if [ -f "/workspace/scripts/patch_compatibility.py" ]; then
+    python3 /workspace/scripts/patch_compatibility.py
+fi
+
+# 5. Parâmetros de execução otimizados para RTX 3090 e SaladCloud:
+# --listen ::: OBRIGATÓRIO no SaladCloud (Gateway do Salad opera via IPv6 / dual-stack)
 # --disable-pinned-memory: CRUCIAL para evitar travamentos de OOM de RAM no Linux
 # --highvram: Mantém tensores na VRAM durante a fase de amostragem
 # --preview-method auto: Pré-visualização fluida de latents
@@ -52,13 +58,15 @@ if [ -n "${CLI_ARGS}" ]; then
     EXTRA_ARGS="${CLI_ARGS}"
 fi
 
+LISTEN_HOST="${LISTEN_HOST:-::}"
+
 echo "=============================================================="
-echo " [INFO] ComfyUI pronto! Iniciando na porta ${PORT}..."
+echo " [INFO] ComfyUI pronto! Iniciando em ${LISTEN_HOST}:${PORT}..."
 echo " [INFO] Acesse pelo Salad Container Gateway ou IP externo."
 echo "=============================================================="
 
 exec python3 main.py \
-    --listen 0.0.0.0 \
+    --listen "${LISTEN_HOST}" \
     --port "${PORT}" \
     --disable-pinned-memory \
     --highvram \
