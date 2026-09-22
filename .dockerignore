@@ -1,0 +1,17 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.safetensors
+*.bin
+*.ckpt
+*.pt
+*.pth
+output/
+temp/
+input/
+models/
+

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  comfyui-minimax-h3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: comfyui-minimax-h3:latest
+    container_name: comfyui-minimax-h3
+    ports:
+      - "8188:8188"
+    environment:
+      - DOWNLOAD_MODELS=true
+      - HF_TOKEN=${HF_TOKEN:-}
+      - CLI_ARGS=--disable-pinned-memory --highvram
+    volumes:
+      - ./models:/workspace/ComfyUI/models
+      - ./output:/workspace/ComfyUI/output
+      - ./input:/workspace/ComfyUI/input
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ipc: host
+    restart: unless-stopped
+
